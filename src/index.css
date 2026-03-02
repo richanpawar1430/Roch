@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Montserrat", sans-serif;
+  
+  --color-brand-50: #fdfcfb; /* Very light cream */
+  --color-brand-100: #f5f2ed; /* Paper cream from logo background */
+  --color-brand-200: #e8e4de;
+  --color-brand-300: #d4cfc7;
+  --color-brand-400: #b8b1a6;
+  --color-brand-500: #9c9488;
+  --color-brand-600: #7d756a; /* Muted stone */
+  --color-brand-700: #5c564e;
+  --color-brand-800: #3d3934;
+  --color-brand-900: #1a1a1a; /* Near black charcoal */
+  
+  --color-charcoal: #2c2c2c;
+  --color-silver: #c0c0c0;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-100 text-brand-900 font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-light tracking-tight;
+  }
+}
+
+.luxury-shadow {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+}
+
+.glass-card {
+  @apply bg-white/80 backdrop-blur-md border border-white/20;
+}
+
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
