@@ -13,5 +13,5 @@ export const CONFIG = {
   WHATSAPP_NUMBER: "+917249109246",
   INSTAGRAM_HANDLE: "@roch.india",
   EMAIL: "roch.india@gmail.com",
-  ADDRESS: "Mundhwa, Pune, Maharashtra, India"
+  ADDRESS: "Kharadi, Pune, Maharashtra, India - 411014"
 };

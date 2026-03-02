@@ -1,4 +1,4 @@
-export type Category = 'All' | 'Jhumkas' | 'Necklaces' | 'Bangles' | 'Nose Pins' | 'Anklets';
+export type Category = 'All' | 'Jhumkas' | 'Necklaces' | 'Bangles' | 'Nose Pins' | 'Anklets' | 'Kamarbands' | 'Hair Accessories';
 
 export interface JewelryItem {
   id: string;
@@ -7,6 +7,7 @@ export interface JewelryItem {
   price: string;
   description: string;
   image: string;
+  hoverImage?: string;
   material: string;
   isNew?: boolean;
 }

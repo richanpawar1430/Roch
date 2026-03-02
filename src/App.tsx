@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Instagram, Mail, Phone, MapPin, ArrowRight, ShoppingBag, Gem } from 'lucide-react';
+import { Menu, X, Instagram, Mail, Phone, MapPin, ArrowRight, Gem } from 'lucide-react';
 import { cn } from './lib/utils';
 import { Category, JewelryItem } from './types';
 import { JEWELRY_DATA } from './data/jewelry';
@@ -23,7 +23,6 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Home', href: '#home' },
     { name: 'The Collection', href: '#catalogue' },
-    { name: 'Our Legacy', href: '#about' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -60,9 +59,6 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="p-2 text-stone-600 hover:text-brand-700 transition-colors">
-            <ShoppingBag size={20} />
-          </button>
           <button 
             className="md:hidden p-2 text-stone-600"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -135,7 +131,7 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-sm md:text-base text-brand-600 mb-12 max-w-md mx-auto font-light leading-relaxed tracking-wide"
         >
-          Handcrafted oxidised silver adornments that bridge the gap between ancient Indian heritage and modern luxury.
+          Where centuries of craftsmanship meet contemporary elegance. Each oxidised piece whispers stories of India's timeless artistry.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -157,10 +153,6 @@ const Hero = () => {
           </a>
         </motion.div>
       </div>
-
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-brand-400">
-        <div className="w-px h-12 bg-brand-300 mx-auto"></div>
-      </div>
     </section>
   );
 };
@@ -179,7 +171,7 @@ const Catalogue = () => {
   const [items, setItems] = useState<JewelryItem[]>(JEWELRY_DATA);
   const [isLoading, setIsLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category>('All');
-  const categories: Category[] = ['All', 'Jhumkas', 'Necklaces', 'Bangles', 'Nose Pins', 'Anklets'];
+  const categories: Category[] = ['All', 'Jhumkas', 'Necklaces', 'Bangles', 'Nose Pins', 'Anklets', 'Kamarbands', 'Hair Accessories'];
 
   useEffect(() => {
     const fetchRemoteData = async () => {
@@ -195,18 +187,23 @@ const Catalogue = () => {
           header: true,
           skipEmptyLines: true,
           complete: (results) => {
-            const parsedData = results.data.map((row: any) => ({
-              id: row.id || Math.random().toString(36).substr(2, 9),
-              name: row.name || 'Unnamed Piece',
-              category: row.category as Category,
-              price: row.price || '₹TBD',
-              description: row.description || '',
-              image: formatImageUrl(row.image || ''),
-              material: row.material || 'Oxidised Silver Finish',
-              isNew: row.isNew === 'true' || row.isNew === '1'
-            }));
+            const parsedData = results.data.map((row: any) => {
+              const item = {
+                id: row.id || Math.random().toString(36).substr(2, 9),
+                name: row.name || 'Unnamed Piece',
+                category: row.category as Category,
+                price: row.price || '₹TBD',
+                description: row.description || '',
+                image: formatImageUrl(row.image || ''),
+                hoverImage: row.hoverImage ? formatImageUrl(row.hoverImage) : undefined,
+                material: row.material || 'Oxidised Silver Finish',
+                isNew: row.isNew === 'true' || row.isNew === '1'
+              };
+              return item;
+            });
             
             if (parsedData.length > 0) {
+              console.log('Loaded items from sheet:', parsedData[0]); // Log first item to check hoverImage
               setItems(parsedData);
             }
           }
@@ -226,7 +223,7 @@ const Catalogue = () => {
     : items.filter(item => item.category === activeCategory);
 
   return (
-    <section id="catalogue" className="py-24 px-6 bg-white">
+    <section id="catalogue" className="py-12 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
           <div>
@@ -268,21 +265,23 @@ const Catalogue = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.4 }}
-                  className={cn(
-                    "group cursor-pointer",
-                    index === 0 ? "md:col-span-2 lg:col-span-2" : ""
-                  )}
+                  className="group cursor-pointer"
                 >
-                  <div className={cn(
-                    "relative overflow-hidden rounded-none mb-6 luxury-shadow bg-brand-50",
-                    index === 0 ? "aspect-[3/2]" : "aspect-[3/4]"
-                  )}>
+                  <div className="relative overflow-hidden rounded-none mb-6 luxury-shadow bg-brand-50 aspect-[3/4]">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 group-hover:opacity-0"
                       referrerPolicy="no-referrer"
                     />
+                    {item.hoverImage && (
+                      <img
+                        src={item.hoverImage}
+                        alt={`${item.name} alternate view`}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-0 group-hover:opacity-100"
+                        referrerPolicy="no-referrer"
+                      />
+                    )}
                     {item.isNew && (
                       <div className="absolute top-4 left-4 bg-brand-900 text-brand-50 text-[8px] uppercase tracking-[0.3em] px-3 py-1.5 font-bold">
                         New Arrival
@@ -299,10 +298,7 @@ const Catalogue = () => {
                   </div>
                   <div className="text-center">
                     <span className="text-[8px] uppercase tracking-[0.4em] text-brand-500 font-bold mb-2 block">{item.category}</span>
-                    <h3 className={cn(
-                      "font-serif text-brand-900 mb-2",
-                      index === 0 ? "text-xl md:text-2xl" : "text-xl"
-                    )}>{item.name}</h3>
+                    <h3 className="font-serif text-brand-900 mb-2 text-xl">{item.name}</h3>
                     <span className="text-xs font-light tracking-widest text-brand-600">{item.price}</span>
                   </div>
                 </motion.div>
@@ -339,7 +335,7 @@ const Contact = () => {
                     target="_blank"
                     className="text-xl font-medium text-stone-800 hover:text-brand-800 transition-colors"
                   >
-                    {CONFIG.WHATSAPP_NUMBER}
+                    ROCH Jewelry Brand
                   </a>
                 </div>
               </div>
@@ -417,7 +413,7 @@ const Footer = () => {
               <Logo variant="light" size="lg" className="items-start mb-6" />
             )}
             <p className="text-stone-400 max-w-sm font-light leading-relaxed">
-              Preserving the heritage of Indian oxidised jewelry. Each piece is a tribute to the timeless artistry of Indian craftsmen.
+              Celebrating the soul of Indian craftsmanship. Oxidised silver whispers ancient stories, each adornment a testament to artistry that transcends time.
             </p>
           </div>
           
@@ -427,27 +423,26 @@ const Footer = () => {
               <li><a href="#catalogue" className="hover:text-white transition-colors">Jhumkas</a></li>
               <li><a href="#catalogue" className="hover:text-white transition-colors">Necklaces</a></li>
               <li><a href="#catalogue" className="hover:text-white transition-colors">Bangles</a></li>
+              <li><a href="#catalogue" className="hover:text-white transition-colors">Nose Pins</a></li>
               <li><a href="#catalogue" className="hover:text-white transition-colors">Anklets</a></li>
+              <li><a href="#catalogue" className="hover:text-white transition-colors">Kamarbands</a></li>
+              <li><a href="#catalogue" className="hover:text-white transition-colors">Hair Accessories</a></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs uppercase tracking-widest font-bold mb-6 text-brand-400">Company</h4>
             <ul className="space-y-4 text-sm text-stone-400">
-              <li><a href="#about" className="hover:text-white transition-colors">Our Story</a></li>
               <li><a href="#contact" className="hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Shipping Info</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Care Guide</a></li>
             </ul>
           </div>
         </div>
 
         <div className="pt-8 border-t border-stone-800 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-stone-500">
-          <p>© 2024 {CONFIG.BUSINESS_NAME} Jewelry. Handcrafted in India.</p>
+          <p>© 2025 {CONFIG.BUSINESS_NAME} Jewelry. Curated from India.</p>
           <div className="flex gap-8">
+            <a href={`https://wa.me/${CONFIG.WHATSAPP_NUMBER.replace(/\+/g, '')}`} target="_blank" className="hover:text-white transition-colors">WhatsApp</a>
             <a href={`https://instagram.com/${CONFIG.INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" className="hover:text-white transition-colors">Instagram</a>
-            <a href="#" className="hover:text-white transition-colors">Pinterest</a>
-            <a href="#" className="hover:text-white transition-colors">Facebook</a>
           </div>
         </div>
       </div>

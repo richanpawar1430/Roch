@@ -8,6 +8,7 @@ export const JEWELRY_DATA: JewelryItem[] = [
     price: '₹850',
     description: 'Traditional temple-inspired oxidised silver jhumkas with intricate peacock carvings and small pearl drops.',
     image: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800',
     material: 'Oxidised Silver Finish',
     isNew: true
   },
@@ -18,6 +19,7 @@ export const JEWELRY_DATA: JewelryItem[] = [
     price: '₹1,200',
     description: 'A bold oxidised silver choker necklace with traditional tribal motifs and adjustable thread back.',
     image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1603561591411-071c4f723935?auto=format&fit=crop&q=80&w=800',
     material: 'Oxidised Silver Finish'
   },
   {
@@ -27,6 +29,7 @@ export const JEWELRY_DATA: JewelryItem[] = [
     price: '₹650',
     description: 'Set of two oxidised silver bangles adorned with tiny musical ghungroos that create a gentle chime.',
     image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1573408302185-91275f96399c?auto=format&fit=crop&q=80&w=800',
     material: 'Oxidised Silver Finish',
     isNew: true
   },
@@ -37,6 +40,7 @@ export const JEWELRY_DATA: JewelryItem[] = [
     price: '₹250',
     description: 'Delicate clip-on oxidised silver nose pin with a central floral motif, perfect for a bohemian look.',
     image: 'https://images.unsplash.com/photo-1535633302704-b02f4fad253f?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800',
     material: 'Oxidised Silver Finish'
   },
   {
@@ -46,6 +50,7 @@ export const JEWELRY_DATA: JewelryItem[] = [
     price: '₹950',
     description: 'Heavy oxidised silver anklets with intricate chain work and traditional Indian patterns.',
     image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800',
     material: 'Oxidised Silver Finish'
   },
   {
@@ -55,6 +60,7 @@ export const JEWELRY_DATA: JewelryItem[] = [
     price: '₹780',
     description: 'Elegant lotus-shaped oxidised silver jhumkas with a matte finish and silver beads.',
     image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=800',
     material: 'Oxidised Silver Finish'
   },
   {
@@ -64,6 +70,7 @@ export const JEWELRY_DATA: JewelryItem[] = [
     price: '₹1,850',
     description: 'Long oxidised silver necklace featuring a large peacock pendant and matching bead work.',
     image: 'https://images.unsplash.com/photo-1603561591411-071c4f723935?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800',
     material: 'Oxidised Silver Finish',
     isNew: true
   },
@@ -74,6 +81,67 @@ export const JEWELRY_DATA: JewelryItem[] = [
     price: '₹550',
     description: 'Oxidised silver bangles with embedded tiny mirrors, reflecting light with every movement.',
     image: 'https://images.unsplash.com/photo-1573408302185-91275f96399c?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800',
+    material: 'Oxidised Silver Finish'
+  },
+  {
+    id: '9',
+    name: 'Intricate Silver Kamarband',
+    category: 'Kamarbands',
+    price: '₹1,450',
+    description: 'Ornate oxidised silver waist belt with traditional Indian temple architecture and chain details.',
+    image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1535633302704-b02f4fad253f?auto=format&fit=crop&q=80&w=800',
+    material: 'Oxidised Silver Finish'
+  },
+  {
+    id: '10',
+    name: 'Temple Bell Hair Clip',
+    category: 'Hair Accessories',
+    price: '₹380',
+    description: 'Elegant oxidised silver hair clip adorned with temple bells and intricate detailing.',
+    image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800',
+    material: 'Oxidised Silver Finish'
+  },
+  {
+    id: '11',
+    name: 'Crescent Moon Nose Pin',
+    category: 'Nose Pins',
+    price: '₹300',
+    description: 'Minimalist crescent moon shaped oxidised silver nose pin with delicate details.',
+    image: 'https://images.unsplash.com/photo-1535633302704-b02f4fad253f?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800',
+    material: 'Oxidised Silver Finish'
+  },
+  {
+    id: '12',
+    name: 'Chain Anklets',
+    category: 'Anklets',
+    price: '₹820',
+    description: 'Beautiful oxidised silver anklets with delicate chain work and traditional patterns.',
+    image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1573408302185-91275f96399c?auto=format&fit=crop&q=80&w=800',
+    material: 'Oxidised Silver Finish'
+  },
+  {
+    id: '13',
+    name: 'Ornate Kamarband',
+    category: 'Kamarbands',
+    price: '₹1,600',
+    description: 'Stunning oxidised silver waist belt with elaborate traditional motifs.',
+    image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1535633302704-b02f4fad253f?auto=format&fit=crop&q=80&w=800',
+    material: 'Oxidised Silver Finish'
+  },
+  {
+    id: '14',
+    name: 'Bead Hair Accessory',
+    category: 'Hair Accessories',
+    price: '₹420',
+    description: 'Decorative oxidised silver hair accessory with traditional beaded design.',
+    image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=800',
+    hoverImage: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800',
     material: 'Oxidised Silver Finish'
   }
 ];
