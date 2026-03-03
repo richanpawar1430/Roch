@@ -1,4 +1,4 @@
-export type Category = 'All' | 'Jhumkas' | 'Necklaces' | 'Bangles' | 'Nose Pins' | 'Anklets' | 'Kamarbands' | 'Hair Accessories';
+export type Category = 'All' | 'Jhumkas' | 'Necklaces' | 'Nose Pins' | 'Anklets' | 'Kamarbands' | 'Hair Accessories';
 
 export interface JewelryItem {
   id: string;

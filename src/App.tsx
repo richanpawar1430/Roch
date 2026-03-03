@@ -171,7 +171,7 @@ const Catalogue = () => {
   const [items, setItems] = useState<JewelryItem[]>(JEWELRY_DATA);
   const [isLoading, setIsLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category>('All');
-  const categories: Category[] = ['All', 'Jhumkas', 'Necklaces', 'Bangles', 'Nose Pins', 'Anklets', 'Kamarbands', 'Hair Accessories'];
+  const categories: Category[] = ['All', 'Jhumkas', 'Necklaces', 'Nose Pins', 'Anklets', 'Kamarbands', 'Hair Accessories'];
 
   useEffect(() => {
     const fetchRemoteData = async () => {
@@ -271,7 +271,10 @@ const Catalogue = () => {
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 group-hover:opacity-0"
+                      className={cn(
+                        "w-full h-full object-cover transition-transform duration-1000",
+                        item.hoverImage && "group-hover:scale-105 group-hover:opacity-0"
+                      )}
                       referrerPolicy="no-referrer"
                     />
                     {item.hoverImage && (
@@ -422,7 +425,7 @@ const Footer = () => {
             <ul className="space-y-4 text-sm text-stone-400">
               <li><a href="#catalogue" className="hover:text-white transition-colors">Jhumkas</a></li>
               <li><a href="#catalogue" className="hover:text-white transition-colors">Necklaces</a></li>
-              <li><a href="#catalogue" className="hover:text-white transition-colors">Bangles</a></li>
+
               <li><a href="#catalogue" className="hover:text-white transition-colors">Nose Pins</a></li>
               <li><a href="#catalogue" className="hover:text-white transition-colors">Anklets</a></li>
               <li><a href="#catalogue" className="hover:text-white transition-colors">Kamarbands</a></li>

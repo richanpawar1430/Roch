@@ -23,17 +23,6 @@ export const JEWELRY_DATA: JewelryItem[] = [
     material: 'Oxidised Silver Finish'
   },
   {
-    id: '3',
-    name: 'Ghungroo Ghungroo Bangles',
-    category: 'Bangles',
-    price: '₹650',
-    description: 'Set of two oxidised silver bangles adorned with tiny musical ghungroos that create a gentle chime.',
-    image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800',
-    hoverImage: 'https://images.unsplash.com/photo-1573408302185-91275f96399c?auto=format&fit=crop&q=80&w=800',
-    material: 'Oxidised Silver Finish',
-    isNew: true
-  },
-  {
     id: '4',
     name: 'Floral Nose Pin',
     category: 'Nose Pins',
@@ -73,16 +62,6 @@ export const JEWELRY_DATA: JewelryItem[] = [
     hoverImage: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800',
     material: 'Oxidised Silver Finish',
     isNew: true
-  },
-  {
-    id: '8',
-    name: 'Mirror Work Bangles',
-    category: 'Bangles',
-    price: '₹550',
-    description: 'Oxidised silver bangles with embedded tiny mirrors, reflecting light with every movement.',
-    image: 'https://images.unsplash.com/photo-1573408302185-91275f96399c?auto=format&fit=crop&q=80&w=800',
-    hoverImage: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800',
-    material: 'Oxidised Silver Finish'
   },
   {
     id: '9',
