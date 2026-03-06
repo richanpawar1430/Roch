@@ -167,6 +167,159 @@ const formatImageUrl = (url: string) => {
   return url;
 };
 
+// --- Featured Product Fallback ---
+const FALLBACK_FEATURED = {
+  name: "The Royal Bridal Set",
+  category: "Bridal Series",
+  price: "Price on Request",
+  description: "An exclusive masterpiece featuring intricate temple motifs and cascading pearls. Designed for the modern bride looking to embrace timeless heritage.",
+  images: [
+    'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1535633302704-b02f4fad253f?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=800'
+  ]
+};
+
+interface FeaturedProduct {
+  name: string;
+  category: string;
+  price: string;
+  description: string;
+  images: string[];
+}
+const HorizontalScrollGallery = () => {
+  const [product, setProduct] = useState<FeaturedProduct | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchRemoteData = async () => {
+      const sheetUrl = CONFIG.FEATURED_SHEET_CSV_URL;
+      if (!sheetUrl) {
+        setProduct(FALLBACK_FEATURED);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const response = await fetch(sheetUrl);
+        const csvText = await response.text();
+        
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            // Assume the sheet either has multiple columns for images (image1, image2, etc.)
+            // OR multiple rows for the same product, where each row is a new image.
+            
+            if (results.data.length === 0) {
+              setProduct(FALLBACK_FEATURED);
+              return;
+            }
+
+            // Let's build a single product from the first row's metadata
+            const firstRow: any = results.data[0];
+            const featured: FeaturedProduct = {
+              name: firstRow.name || firstRow.Title || 'Exclusive Showcase',
+              category: firstRow.category || firstRow.Category || 'Signature Series',
+              price: firstRow.price || firstRow.Price || 'Price on Request',
+              description: firstRow.description || firstRow.Description || 'Discover our most celebrated and timeless creation.',
+              images: []
+            };
+
+            // Collect all unique images from all rows (if they span multiple rows)
+            // or multiple columns (image, image1, image2, etc)
+            const allImages = new Set<string>();
+
+            results.data.forEach((row: any) => {
+              // Check common image column names
+              const possibleImageKeys = ['image', 'image1', 'image2', 'image3', 'hoverImage', 'Image', 'Image 1', 'Image 2'];
+              possibleImageKeys.forEach(key => {
+                if (row[key] && typeof row[key] === 'string' && row[key].trim() !== '') {
+                  allImages.add(formatImageUrl(row[key]));
+                }
+              });
+            });
+
+            if (allImages.size > 0) {
+              featured.images = Array.from(allImages);
+              setProduct(featured);
+            } else {
+              setProduct(FALLBACK_FEATURED);
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error fetching featured data:', error);
+        setProduct(FALLBACK_FEATURED);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRemoteData();
+  }, []);
+
+  if (!product) return null;
+
+  return (
+    <section className="py-24 bg-brand-50 relative border-y border-brand-200">
+      <div className="px-6 md:px-12 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8 max-w-7xl mx-auto">
+        <div className="max-w-2xl">
+          <span className="text-[10px] uppercase tracking-[0.5em] text-brand-700 font-bold mb-4 block">
+            {product.category}
+          </span>
+          <h2 className="text-4xl md:text-5xl font-serif text-brand-900 leading-tight mb-6">
+            {product.name}
+          </h2>
+          <p className="text-sm text-brand-600 font-light tracking-wide leading-relaxed">
+            {product.description}
+          </p>
+        </div>
+        
+        <div className="shrink-0 flex flex-col items-start md:items-end gap-6">
+          <span className="text-lg font-serif text-brand-900">{product.price}</span>
+          <button 
+            onClick={() => window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER.replace(/\+/g, '')}?text=Hi, I'm interested in the ${product.name} from the Signature Series`, '_blank')}
+            className="px-10 py-4 bg-brand-900 text-brand-50 rounded-none text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-brand-800 transition-all flex items-center gap-3"
+          >
+            Inquire Details <ArrowRight size={14} />
+          </button>
+        </div>
+      </div>
+
+      {/* Horizontal Scroll Container - Images Uncropped */}
+      {/* We use items-center so images of different heights align nicely in the center */}
+      <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-8 px-6 md:px-12 pb-12 w-full items-center">
+        {/* Spacer for initial margin alignment */}
+        <div className="snap-center shrink-0 w-[1px] md:w-[calc((100vw-80rem)/2)] hidden xl:block" aria-hidden="true" />
+        
+        {product.images.map((imgUrl, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            className="snap-center shrink-0 relative luxury-shadow bg-white rounded-sm p-4 md:p-6 flex items-center justify-center max-w-[90vw] md:max-w-3xl max-h-[70vh] group"
+          >
+            <img
+              src={imgUrl}
+              alt={`${product.name} - View ${index + 1}`}
+              className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-[1.02]"
+              referrerPolicy="no-referrer"
+              draggable="false"
+              style={{ maxHeight: 'calc(70vh - 3rem)' }} // Account for padding
+            />
+          </motion.div>
+        ))}
+        
+        {/* Spacer for end margin */}
+        <div className="snap-center shrink-0 w-6 md:w-12" aria-hidden="true" />
+      </div>
+    </section>
+  );
+};
+
 const Catalogue = () => {
   const [items, setItems] = useState<JewelryItem[]>(JEWELRY_DATA);
   const [isLoading, setIsLoading] = useState(false);
@@ -267,12 +420,12 @@ const Catalogue = () => {
                   transition={{ duration: 0.4 }}
                   className="group cursor-pointer"
                 >
-                  <div className="relative overflow-hidden rounded-none mb-6 luxury-shadow bg-brand-50 aspect-[3/4]">
+                  <div className="relative overflow-hidden rounded-none mb-6 luxury-shadow bg-brand-50 min-h-[200px] flex items-center justify-center">
                     <img
                       src={item.image}
                       alt={item.name}
                       className={cn(
-                        "w-full h-full object-cover transition-transform duration-1000",
+                        "w-full h-full object-contain transition-transform duration-1000",
                         item.hoverImage && "group-hover:scale-105 group-hover:opacity-0"
                       )}
                       referrerPolicy="no-referrer"
@@ -281,7 +434,7 @@ const Catalogue = () => {
                       <img
                         src={item.hoverImage}
                         alt={`${item.name} alternate view`}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-0 group-hover:opacity-100"
+                        className="absolute inset-0 w-full h-full object-contain transition-transform duration-1000 group-hover:scale-105 opacity-0 group-hover:opacity-100"
                         referrerPolicy="no-referrer"
                       />
                     )}
@@ -317,81 +470,66 @@ const Catalogue = () => {
 const Contact = () => {
   return (
     <section id="contact" className="py-24 px-6 bg-brand-100">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <span className="text-[10px] uppercase tracking-[0.5em] text-brand-700 font-bold mb-4 block">Get In Touch</span>
-            <h2 className="text-4xl md:text-6xl font-serif text-brand-900 mb-8 leading-tight">Connect with <span className="italic">{CONFIG.BUSINESS_NAME}</span></h2>
-            <p className="text-base text-brand-700 mb-12 font-light leading-relaxed tracking-wide">
-              Experience the timeless beauty of Indian craft. For bulk orders, custom designs, or inquiries, reach out to us directly.
-            </p>
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center md:text-left mb-16">
+          <span className="text-[10px] uppercase tracking-[0.5em] text-brand-700 font-bold mb-4 block">Get In Touch</span>
+          <h2 className="text-4xl md:text-6xl font-serif text-brand-900 mb-8 leading-tight">Connect with <span className="italic">{CONFIG.BUSINESS_NAME}</span></h2>
+          <p className="text-base text-brand-700 mb-12 font-light leading-relaxed tracking-wide max-w-2xl">
+            Experience the timeless beauty of Indian craft. For bulk orders, custom designs, or inquiries, reach out to us directly.
+          </p>
+        </div>
 
-            <div className="space-y-6">
-              <div className="flex items-center gap-6 group">
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-700 luxury-shadow group-hover:bg-brand-800 group-hover:text-white transition-all">
-                  <Phone size={20} />
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold block mb-1">WhatsApp Orders</span>
-                  <a 
-                    href={`https://wa.me/${CONFIG.WHATSAPP_NUMBER.replace(/\+/g, '')}`}
-                    target="_blank"
-                    className="text-xl font-medium text-stone-800 hover:text-brand-800 transition-colors"
-                  >
-                    ROCH Jewelry Brand
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-6 group">
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-700 luxury-shadow group-hover:bg-brand-800 group-hover:text-white transition-all">
-                  <Mail size={20} />
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold block mb-1">Email Inquiries</span>
-                  <a href={`mailto:${CONFIG.EMAIL}`} className="text-xl font-medium text-stone-800 hover:text-brand-800 transition-colors">
-                    {CONFIG.EMAIL}
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-6 group">
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-700 luxury-shadow group-hover:bg-brand-800 group-hover:text-white transition-all">
-                  <Instagram size={20} />
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold block mb-1">Follow Us</span>
-                  <a href={`https://instagram.com/${CONFIG.INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" className="text-xl font-medium text-stone-800 hover:text-brand-800 transition-colors">
-                    {CONFIG.INSTAGRAM_HANDLE}
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-6 group">
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-700 luxury-shadow group-hover:bg-brand-800 group-hover:text-white transition-all">
-                  <MapPin size={20} />
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold block mb-1">Our Studio</span>
-                  <p className="text-xl font-medium text-stone-800">
-                    {CONFIG.ADDRESS}
-                  </p>
-                </div>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+          <div className="flex items-center gap-6 group">
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-700 luxury-shadow group-hover:bg-brand-800 group-hover:text-white transition-all">
+              <Phone size={20} />
+            </div>
+            <div>
+              <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold block mb-1">WhatsApp Orders</span>
+              <a 
+                href={`https://wa.me/${CONFIG.WHATSAPP_NUMBER.replace(/\+/g, '')}`}
+                target="_blank"
+                className="text-xl font-medium text-stone-800 hover:text-brand-800 transition-colors"
+              >
+                ROCH Jewelry Brand
+              </a>
             </div>
           </div>
 
-          <div className="relative">
-            <div className="aspect-square rounded-none overflow-hidden border-[12px] border-white luxury-shadow relative z-10">
-              <img
-                src="https://images.unsplash.com/photo-1611085510577-04f4208d8146?auto=format&fit=crop&q=80&w=1000"
-                alt="ROCH Jewelry Studio"
-                className="w-full h-full object-cover grayscale-[10%]"
-                referrerPolicy="no-referrer"
-              />
+          <div className="flex items-center gap-6 group">
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-700 luxury-shadow group-hover:bg-brand-800 group-hover:text-white transition-all">
+              <Mail size={20} />
             </div>
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-brand-300/30 rounded-full blur-3xl z-0"></div>
-            <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-brand-500/20 rounded-full blur-3xl z-0"></div>
+            <div>
+              <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold block mb-1">Email Inquiries</span>
+              <a href={`mailto:${CONFIG.EMAIL}`} className="text-xl font-medium text-stone-800 hover:text-brand-800 transition-colors">
+                {CONFIG.EMAIL}
+              </a>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-6 group">
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-700 luxury-shadow group-hover:bg-brand-800 group-hover:text-white transition-all">
+              <Instagram size={20} />
+            </div>
+            <div>
+              <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold block mb-1">Follow Us</span>
+              <a href={`https://instagram.com/${CONFIG.INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" className="text-xl font-medium text-stone-800 hover:text-brand-800 transition-colors">
+                {CONFIG.INSTAGRAM_HANDLE}
+              </a>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-6 group">
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-700 luxury-shadow group-hover:bg-brand-800 group-hover:text-white transition-all">
+              <MapPin size={20} />
+            </div>
+            <div>
+              <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold block mb-1">Our Studio</span>
+              <p className="text-xl font-medium text-stone-800">
+                {CONFIG.ADDRESS}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -459,7 +597,7 @@ export default function App() {
       <Navbar />
       <main>
         <Hero />
-        
+        <HorizontalScrollGallery />
         <Catalogue />
         <Contact />
       </main>

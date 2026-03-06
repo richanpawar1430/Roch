@@ -6,6 +6,7 @@ export const CONFIG = {
   // Replace this empty string with your "Publish to web" CSV link from Google Sheets
   // Example: "https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?output=csv"
   GOOGLE_SHEET_CSV_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSLGRt3CzLhaX9OXJ3JBxJyvXa7UNlpxnb8OxB3SoCfHuMcnKN0zoNvkH8f87vEN-CohZqb52mkvL1_/pub?output=csv",
+  FEATURED_SHEET_CSV_URL: "https://docs.google.com/spreadsheets/d/1mHUnFWPzQFcXLml5ov1jsuJ6VNMoNMEaXmuqxcxP8Wk/export?format=csv",
   
   // You can also update other business info here
   BUSINESS_NAME: "ROCH",
