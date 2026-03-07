@@ -320,11 +320,16 @@ const HorizontalScrollGallery = () => {
   );
 };
 
-const Catalogue = () => {
+const Catalogue = ({ onCategoriesLoaded }: { onCategoriesLoaded: (cats: string[]) => void }) => {
   const [items, setItems] = useState<JewelryItem[]>(JEWELRY_DATA);
   const [isLoading, setIsLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category>('All');
-  const categories: Category[] = ['All', 'Jhumkas', 'Necklaces', 'Nose Pins', 'Anklets', 'Kamarbands', 'Hair Accessories'];
+  const [categories, setCategories] = useState<Category[]>(() => {
+    // Seed categories from fallback static data so filters appear immediately
+    const fallbackCats = Array.from(new Set(JEWELRY_DATA.map(i => i.category).filter(Boolean)));
+    return ['All', ...fallbackCats];
+  });
+  const [priceSort, setPriceSort] = useState<'default' | 'asc' | 'desc'>('default');
 
   useEffect(() => {
     const fetchRemoteData = async () => {
@@ -356,8 +361,12 @@ const Catalogue = () => {
             });
             
             if (parsedData.length > 0) {
-              console.log('Loaded items from sheet:', parsedData[0]); // Log first item to check hoverImage
               setItems(parsedData);
+              // Dynamically build categories from sheet data
+              const uniqueCats = Array.from(new Set<string>(parsedData.map((i: JewelryItem) => i.category).filter(Boolean)));
+              const dynamicCategories = ['All', ...uniqueCats];
+              setCategories(dynamicCategories);
+              onCategoriesLoaded(uniqueCats);
             }
           }
         });
@@ -371,9 +380,21 @@ const Catalogue = () => {
     fetchRemoteData();
   }, []);
 
-  const filteredItems = activeCategory === 'All'
-    ? items
-    : items.filter(item => item.category === activeCategory);
+  // Helper to extract numeric price value for sorting
+  const extractPrice = (price: string): number => {
+    const match = price.replace(/,/g, '').match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+  };
+
+  const filteredItems = (() => {
+    const categoryFiltered = activeCategory === 'All'
+      ? items
+      : items.filter(item => item.category === activeCategory);
+    
+    if (priceSort === 'asc') return [...categoryFiltered].sort((a, b) => extractPrice(a.price) - extractPrice(b.price));
+    if (priceSort === 'desc') return [...categoryFiltered].sort((a, b) => extractPrice(b.price) - extractPrice(a.price));
+    return categoryFiltered;
+  })();
 
   return (
     <section id="catalogue" className="py-12 px-6 bg-white">
@@ -384,21 +405,43 @@ const Catalogue = () => {
             <h2 className="text-4xl md:text-6xl font-serif text-brand-900">Curated Adornments</h2>
           </div>
           
-          <div className="flex flex-wrap gap-8">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={cn(
-                  "text-[10px] uppercase tracking-[0.3em] font-bold transition-all pb-1 border-b",
-                  activeCategory === cat
-                    ? "text-brand-900 border-brand-900"
-                    : "text-brand-400 border-transparent hover:text-brand-700"
-                )}
+          <div className="flex flex-wrap items-center gap-6">
+            {/* Category Filters */}
+            <div className="flex flex-wrap gap-8">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={cn(
+                    "text-[10px] uppercase tracking-[0.3em] font-bold transition-all pb-1 border-b",
+                    activeCategory === cat
+                      ? "text-brand-900 border-brand-900"
+                      : "text-brand-400 border-transparent hover:text-brand-700"
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Price Sort Dropdown */}
+            <div className="relative ml-auto">
+              <select
+                value={priceSort}
+                onChange={(e) => setPriceSort(e.target.value as 'default' | 'asc' | 'desc')}
+                className="appearance-none bg-white border border-brand-200 text-brand-700 text-[10px] uppercase tracking-[0.3em] font-bold px-4 py-2 pr-8 focus:outline-none focus:border-brand-900 cursor-pointer hover:border-brand-700 transition-colors"
               >
-                {cat}
-              </button>
-            ))}
+                <option value="default">Sort by Price</option>
+                <option value="asc">Price: Low to High</option>
+                <option value="desc">Price: High to Low</option>
+              </select>
+              {/* Custom chevron icon */}
+              <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+                <svg className="w-3 h-3 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -537,7 +580,7 @@ const Contact = () => {
   );
 };
 
-const Footer = () => {
+const Footer = ({ categories }: { categories: string[] }) => {
   return (
     <footer className="bg-stone-900 text-white py-16 px-6">
       <div className="max-w-7xl mx-auto">
@@ -561,13 +604,9 @@ const Footer = () => {
           <div>
             <h4 className="text-xs uppercase tracking-widest font-bold mb-6 text-brand-400">Shop</h4>
             <ul className="space-y-4 text-sm text-stone-400">
-              <li><a href="#catalogue" className="hover:text-white transition-colors">Jhumkas</a></li>
-              <li><a href="#catalogue" className="hover:text-white transition-colors">Necklaces</a></li>
-
-              <li><a href="#catalogue" className="hover:text-white transition-colors">Nose Pins</a></li>
-              <li><a href="#catalogue" className="hover:text-white transition-colors">Anklets</a></li>
-              <li><a href="#catalogue" className="hover:text-white transition-colors">Kamarbands</a></li>
-              <li><a href="#catalogue" className="hover:text-white transition-colors">Hair Accessories</a></li>
+              {categories.map((cat) => (
+                <li key={cat}><a href="#catalogue" className="hover:text-white transition-colors">{cat}</a></li>
+              ))}
             </ul>
           </div>
 
@@ -592,16 +631,18 @@ const Footer = () => {
 };
 
 export default function App() {
+  const [shopCategories, setShopCategories] = useState<string[]>([]);
+
   return (
     <div className="min-h-screen selection:bg-brand-200 selection:text-brand-900">
       <Navbar />
       <main>
         <Hero />
         <HorizontalScrollGallery />
-        <Catalogue />
+        <Catalogue onCategoriesLoaded={setShopCategories} />
         <Contact />
       </main>
-      <Footer />
+      <Footer categories={shopCategories} />
     </div>
   );
 }
