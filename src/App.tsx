@@ -277,7 +277,7 @@ const HorizontalScrollGallery = () => {
         </div>
         
         <div className="shrink-0 flex flex-col items-start md:items-end gap-6">
-          <span className="text-lg font-serif text-brand-900">{product.price}</span>
+          <span className="text-xl font-sans font-medium text-brand-700 tracking-tight">{product.price}</span>
           <button 
             onClick={() => window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER.replace(/\+/g, '')}?text=Hi, I'm interested in the ${product.name} from the Signature Series`, '_blank')}
             className="px-10 py-4 bg-brand-900 text-brand-50 rounded-none text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-brand-800 transition-all flex items-center gap-3"
